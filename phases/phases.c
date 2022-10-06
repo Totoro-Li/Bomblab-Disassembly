@@ -6,11 +6,13 @@
 #include "phases.h"
 
 
+//00000000000017ad <phase_1>:
 void phase_1(const char *user_input) {
-    if (strings_not_equal(user_input, "I can do this all day.") != 0)
+    if (strings_not_equal(user_input, "Hasta la vista, baby.") != 0)
         explode_bomb();
 }
 
+//00000000000017d1 <phase_2>:
 void phase_2(const char *user_input) {
     int num_buf[6];
 
@@ -25,6 +27,7 @@ void phase_2(const char *user_input) {
     }
 }
 
+//0000000000001843 <phase_3>:
 void phase_3(const char *user_input) {
     int target;
     int recv_1;

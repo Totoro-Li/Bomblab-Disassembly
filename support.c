@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+extern FILE *infile;
 int strings_not_equal(const char *str_a, const char *str_b) {
     int len_a;
     int len_b;
@@ -57,169 +58,98 @@ int func4(int a, int b) {
 
 void read_six_numbers(const char *user_input, int *num_buf) {
     int *current = num_buf;
-    int unit = sizeof(int);
-    int param_count = sscanf(user_input, "%d %d %d %d %d %d", current, current + unit, current + unit * 2, current + unit * 3, current + unit * 4, current + unit * 5);
+    int param_count = sscanf(user_input, "%d %d %d %d %d %d", current, current + 1, current + 2, current + 3,
+                             current + 4, current + 5);
     if (5 < param_count) {
         return;
     }
     explode_bomb();
 }
+char *skip()
+{
+    char *v0; // rax
+    char *v1; // rbx
 
+    do
+    {
+        v0 = fgets((char *)(80LL * num_input_strings + 6309856), 80, infile);
+        v1 = v0;
+    }
+    while ( v0 && (unsigned int)blank_line(v0) );
+    return v1;
+}
+const char *read_line()
+{
+    int v0; // edx
+    const char *v1; // rsi
+    unsigned __int64 v2; // kr08_8
+    int v3; // eax
+    signed __int64 v4; // rax
 
-char *read_line() {
-
-    char cVar1;
-    int iVar2;
-    int iVar3;
-    int iVar4;
-    long lVar5;
-    char *pcVar6;
-    long lVar7;
-    int *piVar8;
-    long in_FS_OFFSET;
-    byte bVar9;
-    char acStack112[72];
-    long lStack40;
-
-    bVar9 = 0;
-    lVar5 = skip();
-    if (lVar5 == 0) {
-        if (infile == stdin) {
+    if ( !skip() )
+    {
+        if ( infile == (FILE *)stdin )
+        {
             puts("Error: Premature EOF on stdin");
-            /* WARNING: Subroutine does not return */
             exit(8);
         }
-        pcVar6 = getenv("GRADE_BOMB");
-        if (pcVar6 != (char *) 0x0) {
-            /* WARNING: Subroutine does not return */
+        if ( getenv("GRADE_BOMB") )
             exit(0);
-        }
-        infile = stdin;
-        lVar5 = skip();
-        if (lVar5 == 0) {
+        infile = (FILE *)stdin;
+        if ( !skip() )
+        {
             puts("Error: Premature EOF on stdin");
-            /* WARNING: Subroutine does not return */
             exit(0);
         }
     }
-    lVar5 = (long) num_input_strings;
-    lVar7 = -1;
-    pcVar6 = input_strings + lVar5 * 0x78;
-    do {
-        if (lVar7 == 0) break;
-        lVar7 = lVar7 + -1;
-        cVar1 = *pcVar6;
-        pcVar6 = pcVar6 + (ulong) bVar9 * -2 + 1;
-    } while (cVar1 != '\0');
-    if ((int) (~(uint) lVar7 - 1) < 0x77) {
-        input_strings[(long) (int) (~(uint) lVar7 - 2) + (long) num_input_strings * 0x78] = 0;
-        num_input_strings = num_input_strings + 1;
-        return input_strings + lVar5 * 0x78;
+    v0 = num_input_strings;
+    v1 = (const char *)(80LL * num_input_strings + 6309856);
+    v2 = strlen(v1) + 1;
+    if ( (signed int)v2 - 1 > 78 )
+    {
+        puts("Error: Input line too long");
+        v3 = num_input_strings++;
+        v4 = 10LL * v3;
+        input_strings[v4] = 7164793191628679722LL;
+        qword_6047E8[v4] = 11868310583211105LL;
+        explode_bomb(11868310583211105LL, (__int64)v1);
     }
-    puts("Error: Input line too long");
-    lVar5 = (long) num_input_strings;
-    piVar8 = (int *) &DAT_2a2a2a64657461;
-    num_input_strings = num_input_strings + 1;
-    *(undefined8 * )(input_strings + lVar5 * 0x78) = 0x636e7572742a2a2a;
-    *(undefined * *)(input_strings + lVar5 * 0x78 + 8) = &DAT_2a2a2a64657461;
-    explode_bomb();
-    lStack40 = *(long *) (in_FS_OFFSET + 0x28);
-    iVar2 = gethostname(acStack112, 0x40);
-    iVar4 = iVar2;
-    if (iVar2 != 0) {
-        puts("Error: Running on an illegal host");
-        /* WARNING: Subroutine does not return */
-        exit(8);
-    }
-    do {
-        if (*(char **) (host_table + (long) iVar4 * 8) == (char *) 0x0) {
-            LAB_00102430:
-            *piVar8 = 0;
-            send_msg(1, piVar8);
-            if ((*piVar8 != *(int *) (secret_tokens + (long) iVar4 * 4)) || (iVar2 == 0)) {
-                __printf_chk(1, &DAT_001044b0);
-                /* WARNING: Subroutine does not return */
-                exit(8);
-            }
-            if (num_input_strings == 6) {
-                iVar4 = abracadabra();
-                if (iVar4 != 0) {
-                    iVar4 = alohomora();
-                    if (iVar4 == 0) {
-                        puts("Do you think you really trigger the secret phase? Mua ha ha ha!");
-                    } else {
-                        puts("Curses, you\'ve found the secret phase!");
-                        puts("But finding it and solving it are quite different...");
-                        secret_phase();
-                    }
-                }
-                puts("Congratulations! You\'ve defused the bomb!");
-                puts("Your instructor has been notified and will verify your solution.");
-            }
-            if (lStack40 != *(long *) (in_FS_OFFSET + 0x28)) {
-                /* WARNING: Subroutine does not return */
-                __stack_chk_fail();
-            }
-            return (char *) 0x0;
-        }
-        iVar3 = strcasecmp(*(char **) (host_table + (long) iVar4 * 8), acStack112);
-        if (iVar3 == 0) {
-            iVar2 = 1;
-            goto LAB_00102430;
-        }
-        iVar4 = iVar4 + 1;
-    } while (true);
-
+    *((_BYTE *)&input_strings[10 * num_input_strings] + (signed int)v2 - 2) = 0;
+    num_input_strings = v0 + 1;
+    return v1;
 }
 
 char *initialize_bomb() {
-    int iVar1;
-    int iVar2;
-    int iVar3;
-    undefined4 *puVar4;
-    long in_FS_OFFSET;
-    char acStack8296[64];
-    undefined local_2028[8200];
-    long local_20;
+    const char *v0; // rdi
+    _QWORD *v1; // rbx
+    __int64 v3; // [rsp+0h] [rbp-2058h]
+    char v4; // [rsp+40h] [rbp-2018h]
+    unsigned __int64 v5; // [rsp+2048h] [rbp-10h]
 
-    local_20 = *(long *) (in_FS_OFFSET + 0x28);
-    signal(2, sig_handler);
-    iVar1 = gethostname(acStack8296, 0x40);
-    iVar3 = iVar1;
-    if (iVar1 != 0) {
+    v5 = __readfsqword(0x28u);
+    signal(2, (__sighandler_t) sig_handler);
+    if (gethostname((char *) &v3, 0x40uLL)) {
         puts("Initialization error: Running on an illegal host [1]");
-        /* WARNING: Subroutine does not return */
         exit(8);
     }
-    do {
-        if (*(char **) (host_table + (long) iVar3 * 8) == (char *) 0x0) {
-            LAB_001019bc:
-            if (iVar1 == 0) {
-                puts("Initialization error: Running on an illegal host [2]");
-                /* WARNING: Subroutine does not return */
-                exit(8);
-            }
-            iVar3 = init_driver(local_2028);
-            if (iVar3 < 0) {
-                __printf_chk(1, "Initialization error:\n%s\n", local_2028);
-                /* WARNING: Subroutine does not return */
-                exit(8);
-            }
-            puVar4 = (undefined4 *) malloc(4);
-            *puVar4 = 0x2021fa11;
-            if (local_20 != *(long *) (in_FS_OFFSET + 0x28)) {
-                /* WARNING: Subroutine does not return */
-                __stack_chk_fail();
-            }
-            return;
-        }
-        iVar2 = strcasecmp(*(char **) (host_table + (long) iVar3 * 8), acStack8296);
-        if (iVar2 == 0) {
-            iVar1 = 1;
-            goto LAB_001019bc;
-        }
-        iVar3 = iVar3 + 1;
-    } while (true);
+    v0 = host_table;
+    v1 = &unk_6043A8;
+    if (!host_table) {
+        LABEL_11:
+        puts("Initialization error: Running on an illegal host [2]");
+        exit(8);
+    }
+    while (strcasecmp(v0, (const char *) &v3)) {
+        ++v1;
+        v0 = (const char *) *(v1 - 1);
+        if (!v0)
+            goto LABEL_11;
+    }
+    if ((signed int) init_driver((__int64) &v4) < 0) {
+        __printf_chk(1LL, "Initialization error:\n%s\n", &v4);
+        exit(8);
+    }
+    return __readfsqword(0x28u) ^ v5;
 }
 
 
